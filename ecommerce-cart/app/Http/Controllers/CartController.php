@@ -5,43 +5,52 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\CartItem;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 
 class CartController extends Controller
 {
-    public function add(Product $product)
+
+    public function index()
+    {
+        $cart = auth()->user()
+            ->cart()
+            ->with('items.product')
+            ->first();
+
+        return Inertia::render('Cart/Index', [
+            'cart' => $cart,
+        ]);
+    }
+
+
+    public function add(Request $request)
     {
         $cart = auth()->user()->cart()->firstOrCreate([
-             'user_id' => auth()->id(),
+              'user_id' => auth()->id(),
         ]);
 
-        $item = $cart->items()->where('product_id', $product->id)->first();
-
-        if ($item) {
-            $item->increment('quantity');
-        } else {
-            $cart->items()->create([
-                'product_id' => $product->id,
-                'quantity' => 1,
-            ]);
-        }
+        $cart->items()->updateOrCreate(
+            ['product_id' => $request->product_id],
+            ['quantity' => DB::raw('quantity + 1')]
+        );
 
         return back();
     }
 
-    public function update(CartItem $item)
+    public function update(Request $request, CartItem $item)
     {
-        $item->update([
-            'quantity' => request('quantity'),
+        $request->validate([
+           'quantity' => 'required|integer|min:1',
         ]);
-
+        $item->update(['quantity' => $request->quantity]);
         return back();
     }
 
     public function remove(CartItem $item)
     {
         $item->delete();
-
         return back();
     }
 
