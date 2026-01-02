@@ -12,6 +12,14 @@ export default function CartDrawer({ open, onClose }) {
         });
     };
 
+    const checkout = () => {
+        router.post('/checkout', {}, {
+            preserveScroll: true,
+            onSuccess: () => {
+                onClose();
+            }
+        });
+    };
 
     return (
         <div
@@ -92,6 +100,16 @@ export default function CartDrawer({ open, onClose }) {
                         </div>
                     ))}
                 </div>
+
+                <div className="p-4 border-t">
+                <button
+                    onClick={checkout}
+                    disabled={cart?.items.length === 0}
+                    className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 disabled:opacity-50"
+                >
+                    Checkout
+                </button>
+            </div>
             </div>
         </div>
     );

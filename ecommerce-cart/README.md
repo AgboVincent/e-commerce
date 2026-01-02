@@ -57,3 +57,20 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+# Ecommerce-app
+
+## Setup
+- composer install
+- npm install
+- php artisan migrate --seed
+- php artisan queue:work
+- php artisan serve
+
+## Admin User
+Email: admin@app.com
+Password: password
+
+## Scheduled Jobs
+- Daily sales report runs at 6PM

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
@@ -22,8 +23,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Inertia::share([
-        'cart' => function () {
-            $user = auth()->user();
+            'cart' => function () {
+                $user = Auth::user();
 
                 if (!$user) {
                     return null;
@@ -31,8 +32,8 @@ class AppServiceProvider extends ServiceProvider
 
                 return $user->cart?->load('items.product');
             },
-        'cartCount' => function () {
-            $user = auth()->user();
+            'cartCount' => function () {
+                $user = Auth::user();
 
             if (!$user) {
                 return 0;

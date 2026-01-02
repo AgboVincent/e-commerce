@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\CartItem;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -14,8 +15,8 @@ class CartController extends Controller
 
     public function index()
     {
-        $cart = auth()->user()
-            ->cart()
+        $cart = Auth::user()
+            ->cart
             ->with('items.product')
             ->first();
 
@@ -27,8 +28,9 @@ class CartController extends Controller
 
     public function add(Request $request)
     {
-        $cart = auth()->user()->cart()->firstOrCreate([
-              'user_id' => auth()->id(),
+        $user = $request->user();
+        $cart = $user->cart()->firstOrCreate([
+              'user_id' => $user->id,
         ]);
 
         $cart->items()->updateOrCreate(

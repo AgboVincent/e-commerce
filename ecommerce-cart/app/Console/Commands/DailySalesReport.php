@@ -3,10 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
-use App\Models\Order;
-use App\Mail\DailySalesReportMail;
-use Illuminate\Console\Scheduling\Schedule;
+use App\Jobs\SendDailySalesReportJob;
+
 
 class DailySalesReport extends Command
 {
@@ -27,18 +25,12 @@ class DailySalesReport extends Command
     /**
      * Execute the console command.
      */
+
     public function handle()
     {
-        $orders = Order::whereDate('created_at', today())->with('items.product')->get();
+       SendDailySalesReportJob::dispatch();
 
-        Mail::to('admin@example.com')->send(
-            new DailySalesReportMail($orders)
-        );
-    }
-
-    protected function schedule(Schedule $schedule)
-    {
-        $schedule->command('sales:daily')->dailyAt('18:00');
+       $this->info('Daily sales report job dispatched.');
     }
 
     

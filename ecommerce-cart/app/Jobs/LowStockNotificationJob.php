@@ -6,6 +6,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Product;
+use App\Models\User;
 use App\Mail\LowStockMail;
 
 class LowStockNotificationJob implements ShouldQueue
@@ -15,7 +16,7 @@ class LowStockNotificationJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct()
+    public function __construct(public Product $product)
     {
         //
     }
@@ -25,12 +26,8 @@ class LowStockNotificationJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $products = Product::where('stock_quantity', '<=', 2)->get();
+        $adminEmail = User::where('is_admin', true)->value('email');
 
-        if ($products->isEmpty()) return;
-
-        Mail::to('admin@example.com')->send(
-            new LowStockMail($products)
-        );
+        Mail::to($adminEmail)->send( new LowStockMail($this->product) );
     }
 }

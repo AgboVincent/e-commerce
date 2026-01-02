@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Product;
 
 class LowStockMail extends Mailable
 {
@@ -16,9 +17,11 @@ class LowStockMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+
+    
+    public function __construct(public Product $product)
     {
-        //
+        
     }
 
     /**
@@ -37,7 +40,10 @@ class LowStockMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.low-stock',
+            with: [
+                'product' => $this->product,
+            ]
         );
     }
 
